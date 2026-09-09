@@ -1,0 +1,21 @@
+## .NET build output
+bin/
+obj/
+out/
+
+## Visual Studio / VS Code
+.vs/
+.vscode/*
+!.vscode/settings.json
+*.user
+
+## Rider
+.idea/
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Secrets — never commit real connection strings or JWT keys
+appsettings.Local.json
+*.pfx
