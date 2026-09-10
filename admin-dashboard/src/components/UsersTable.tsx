@@ -1,4 +1,4 @@
-import { AdminUser } from "../api/client";
+import type { AdminUser } from "../api/client";
 import { USER_ROLE_LABELS, label } from "../lib/enums";
 
 export default function UsersTable({ users }: { users: AdminUser[] }) {

@@ -30,6 +30,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AdminDashboard", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -69,6 +80,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AdminDashboard");
 
 app.UseAuthentication(); // must come before UseAuthorization
 app.UseAuthorization();
@@ -76,5 +88,6 @@ app.UseAuthorization();
 app.MapAuthEndpoints();
 app.MapLandPlotEndpoints();
 app.MapLeaseOfferEndpoints();
+app.MapAdminEndpoints();
 
 app.Run();

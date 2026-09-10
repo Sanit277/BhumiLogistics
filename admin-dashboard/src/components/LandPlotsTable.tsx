@@ -1,4 +1,4 @@
-import { AdminLandPlot } from "../api/client";
+import type { AdminLandPlot } from "../api/client";
 import { HIGHWAY_TYPE_LABELS, label } from "../lib/enums";
 
 interface LandPlotsTableProps {

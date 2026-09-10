@@ -1,12 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import {
-  api,
-  clearToken,
-  AdminUser,
-  AdminLandPlot,
-  AdminLeaseOffer,
-  ApiError,
-} from "../api/client";
+import { api, clearToken, ApiError } from "../api/client";
+import type { AdminUser, AdminLandPlot, AdminLeaseOffer } from "../api/client";
 import UsersTable from "../components/UsersTable";
 import LandPlotsTable from "../components/LandPlotsTable";
 import LeaseOffersTable from "../components/LeaseOffersTable";
@@ -51,7 +45,11 @@ export default function DashboardPage({ onSignedOut }: DashboardPageProps) {
   }, [onSignedOut]);
 
   useEffect(() => {
-    loadAll();
+    async function loadDashboard() {
+      await loadAll();
+    }
+
+    void loadDashboard();
   }, [loadAll]);
 
   async function handleDeletePlot(id: string) {

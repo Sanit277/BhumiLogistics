@@ -1,4 +1,4 @@
-import { AdminLeaseOffer } from "../api/client";
+import type { AdminLeaseOffer } from "../api/client";
 import { OFFER_STATUS_LABELS, label } from "../lib/enums";
 
 export default function LeaseOffersTable({
