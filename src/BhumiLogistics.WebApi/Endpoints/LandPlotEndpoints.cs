@@ -22,7 +22,7 @@ public static class LandPlotEndpoints
             return Results.Created($"/api/land-plots/{id}", new { id });
         })
         .WithName("CreateLandPlot")
-        .RequireAuthorization()
+        .RequireAuthorization(policy => policy.RequireRole("Landowner")) 
         .Produces(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 

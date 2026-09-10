@@ -10,13 +10,15 @@ public static class LeaseOfferEndpoints
     {
         var group = app.MapGroup("/api/lease-offers").WithTags("Lease Offers");
 
+    
+
         group.MapPost("/", async (SubmitLeaseOfferCommand command, ISender sender) =>
         {
             var id = await sender.Send(command);
             return Results.Created($"/api/lease-offers/{id}", new { id });
         })
         .WithName("SubmitLeaseOffer")
-        .RequireAuthorization()
+        .RequireAuthorization(policy => policy.RequireRole("CorporateTenant"))   // ← CHANGED
         .Produces(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
@@ -27,7 +29,7 @@ public static class LeaseOfferEndpoints
             return Results.NoContent();
         })
         .WithName("AcceptLeaseOffer")
-        .RequireAuthorization()
+        .RequireAuthorization(policy => policy.RequireRole("Landowner"))   // ← CHANGED
         .Produces(StatusCodes.Status204NoContent)
         .ProducesValidationProblem();
     }
