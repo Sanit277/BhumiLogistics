@@ -2,6 +2,8 @@ using BhumiLogistics.Application.Features.Admin.Commands.DeleteLandPlot;
 using BhumiLogistics.Application.Features.Admin.Queries.GetAllLandPlots;
 using BhumiLogistics.Application.Features.Admin.Queries.GetAllLeaseOffers;
 using BhumiLogistics.Application.Features.Admin.Queries.GetAllUsers;
+using BhumiLogistics.Application.Features.Admin.Commands.VerifyLandPlotOwnership;
+using BhumiLogistics.Application.Features.Admin.Commands.RejectLandPlotOwnership;
 using MediatR;
 
 namespace BhumiLogistics.WebApi.Endpoints;
@@ -32,5 +34,25 @@ public static class AdminEndpoints
             return Results.NoContent();
         })
         .WithName("AdminDeleteLandPlot");
+
+        group.MapPut("/land-plots/{id:guid}/verify-ownership", async (
+            Guid id, VerifyOwnershipRequest body, ISender sender) =>
+        {
+            await sender.Send(new VerifyLandPlotOwnershipCommand(id, body.Notes));
+            return Results.NoContent();
+        })
+        .WithName("AdminVerifyLandPlotOwnership")
+        .Produces(StatusCodes.Status204NoContent);
+
+        group.MapPut("/land-plots/{id:guid}/reject-ownership", async (
+            Guid id, RejectOwnershipRequest body, ISender sender) =>
+        {
+            await sender.Send(new RejectLandPlotOwnershipCommand(id, body.Reason));
+            return Results.NoContent();
+        })
+        .WithName("AdminRejectLandPlotOwnership")
+        .Produces(StatusCodes.Status204NoContent);
     }
 }
+public sealed record VerifyOwnershipRequest(string? Notes);
+public sealed record RejectOwnershipRequest(string Reason);

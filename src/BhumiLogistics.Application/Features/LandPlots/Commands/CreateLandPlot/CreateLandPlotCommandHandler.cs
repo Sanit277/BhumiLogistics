@@ -6,10 +6,6 @@ using MediatR;
 
 namespace BhumiLogistics.Application.Features.LandPlots.Commands.CreateLandPlot;
 
-/// <summary>
-/// Handles the creation of a new highway-connected land listing.
-/// Demonstrates the clean data flow: Command → Handler → Domain factory → Repository.
-/// </summary>
 public class CreateLandPlotCommandHandler : IRequestHandler<CreateLandPlotCommand, Guid>
 {
     private readonly ILandPlotRepository _landPlotRepository;
@@ -34,6 +30,18 @@ public class CreateLandPlotCommandHandler : IRequestHandler<CreateLandPlotComman
         var plusCode = PlusCode.Create(request.PlusCode);
         var area = LandArea.Create(request.SizeInBigha, request.SizeInKattha);
 
+        var ownershipVerification = OwnershipVerification.Declare(
+            request.RegisteredOwnerName,
+            request.RelationshipToOwner,
+            request.PowerOfAttorneyReferenceNumber,
+            request.LalpurjaReferenceNumber,
+            request.KittaNumber,
+            request.WardMunicipality,
+            request.LandIdentityNumber,
+            request.TenureType,
+            request.MohiTenancyDeclared,
+            request.MohiTenancyNotes);
+
         var landPlot = LandPlot.List(
             plusCode,
             area,
@@ -41,11 +49,12 @@ public class CreateLandPlotCommandHandler : IRequestHandler<CreateLandPlotComman
             ownerId,
             request.Latitude,
             request.Longitude,
-            request.Description);
+            request.Description,
+            ownershipVerification);
 
         await _landPlotRepository.AddAsync(landPlot, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return landPlot.Id;
     }
-}
+    }

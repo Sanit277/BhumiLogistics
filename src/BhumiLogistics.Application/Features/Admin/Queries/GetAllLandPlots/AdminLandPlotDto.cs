@@ -10,4 +10,8 @@ public sealed record AdminLandPlotDto(
     bool IsLeased,
     Guid OwnerId,
     int OfferCount,
+    OwnershipVerificationStatus OwnershipStatus,
+    string RegisteredOwnerName,
+    LandTenureType TenureType,
+    bool MohiTenancyDeclared,
     DateTimeOffset CreatedAtUtc);

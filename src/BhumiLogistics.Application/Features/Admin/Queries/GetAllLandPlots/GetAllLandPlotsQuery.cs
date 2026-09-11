@@ -24,6 +24,10 @@ public class GetAllLandPlotsQueryHandler : IRequestHandler<GetAllLandPlotsQuery,
                 p.IsLeased,
                 p.OwnerId,
                 p.LeaseOffers.Count,
+                p.OwnershipVerification.Status,
+                p.OwnershipVerification.RegisteredOwnerName,
+                p.OwnershipVerification.TenureType,
+                p.OwnershipVerification.MohiTenancyDeclared,
                 p.CreatedAtUtc))
             .ToListAsync(cancellationToken);
 }

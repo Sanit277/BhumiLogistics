@@ -10,4 +10,14 @@ public sealed record CreateLandPlotCommand(
     HighwayType HighwayFrontageType,
     decimal Latitude,
     decimal Longitude,
-    string Description) : IRequest<Guid>; // OwnerId is derived from the authenticated JWT, not the request body
+    string Description,
+    string RegisteredOwnerName,
+    OwnerRelationship RelationshipToOwner,
+    string? PowerOfAttorneyReferenceNumber,
+    string LalpurjaReferenceNumber,
+    string KittaNumber,
+    string WardMunicipality,
+    string? LandIdentityNumber,
+    LandTenureType TenureType,
+    bool MohiTenancyDeclared,
+    string? MohiTenancyNotes) : IRequest<Guid>;

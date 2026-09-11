@@ -20,6 +20,7 @@ public class LandPlot : BaseAuditableEntity
     public decimal LatitudeCoordinate { get; private set; }
     public decimal LongitudeCoordinate { get; private set; }
     public string Description { get; private set; } = string.Empty;
+    public OwnershipVerification OwnershipVerification { get; private set; } = null!;
 
     private readonly List<LeaseOffer> _leaseOffers = new();
     public IReadOnlyCollection<LeaseOffer> LeaseOffers => _leaseOffers.AsReadOnly();
@@ -33,7 +34,8 @@ public class LandPlot : BaseAuditableEntity
         Guid ownerId,
         decimal latitude,
         decimal longitude,
-        string description)
+        string description,
+        OwnershipVerification ownershipVerification)
     {
         PlusCode = plusCode;
         Area = area;
@@ -42,6 +44,7 @@ public class LandPlot : BaseAuditableEntity
         LatitudeCoordinate = latitude;
         LongitudeCoordinate = longitude;
         Description = description;
+        OwnershipVerification = ownershipVerification;
         IsLeased = false;
 
         AddDomainEvent(new LandPlotListedEvent(Id, OwnerId));
@@ -54,12 +57,14 @@ public class LandPlot : BaseAuditableEntity
         Guid ownerId,
         decimal latitude,
         decimal longitude,
-        string description)
+        string description,
+        OwnershipVerification ownershipVerification)
     {
         if (ownerId == Guid.Empty)
             throw new DomainException("A land plot must belong to a valid owner.");
 
-        return new LandPlot(plusCode, area, highwayFrontageType, ownerId, latitude, longitude, description);
+        return new LandPlot(
+            plusCode, area, highwayFrontageType, ownerId, latitude, longitude, description, ownershipVerification);
     }
 
     /// <summary>
@@ -83,4 +88,10 @@ public class LandPlot : BaseAuditableEntity
     }
 
     public void ReleaseFromLease() => IsLeased = false;
+
+    public void VerifyOwnership(Guid adminUserId, string? notes) =>
+        OwnershipVerification.MarkVerified(adminUserId, notes);
+
+    public void RejectOwnership(Guid adminUserId, string reason) =>
+        OwnershipVerification.Reject(adminUserId, reason);
 }
