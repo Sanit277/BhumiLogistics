@@ -89,5 +89,7 @@ app.MapAuthEndpoints();
 app.MapLandPlotEndpoints();
 app.MapLeaseOfferEndpoints();
 app.MapAdminEndpoints();
+app.MapPlatformEndpoints();
+app.MapGrievanceEndpoints();
 
 app.Run();

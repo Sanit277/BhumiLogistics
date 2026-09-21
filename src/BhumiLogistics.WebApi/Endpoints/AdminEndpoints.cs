@@ -4,6 +4,12 @@ using BhumiLogistics.Application.Features.Admin.Queries.GetAllLeaseOffers;
 using BhumiLogistics.Application.Features.Admin.Queries.GetAllUsers;
 using BhumiLogistics.Application.Features.Admin.Commands.VerifyLandPlotOwnership;
 using BhumiLogistics.Application.Features.Admin.Commands.RejectLandPlotOwnership;
+using BhumiLogistics.Application.Features.Admin.Queries.GetHighwaySetbackStandards;
+using BhumiLogistics.Application.Features.Admin.Commands.UpdateHighwaySetbackStandard;
+using BhumiLogistics.Application.Features.Admin.Queries.GetAllGrievances;
+using BhumiLogistics.Application.Features.Admin.Commands.ResolveGrievance;
+using BhumiLogistics.Application.Features.Admin.Commands.UpdatePlatformSettings;
+using BhumiLogistics.Application.Features.Platform.Queries.GetPlatformDisclosure;
 using MediatR;
 
 namespace BhumiLogistics.WebApi.Endpoints;
@@ -52,7 +58,44 @@ public static class AdminEndpoints
         })
         .WithName("AdminRejectLandPlotOwnership")
         .Produces(StatusCodes.Status204NoContent);
+
+        group.MapGet("/highway-setback-standards", async (ISender sender) =>
+            Results.Ok(await sender.Send(new GetHighwaySetbackStandardsQuery())))
+            .WithName("AdminGetHighwaySetbackStandards");
+
+        group.MapPut("/highway-setback-standards/{highwayFrontageType}", async (
+            BhumiLogistics.Domain.Enums.HighwayType highwayFrontageType,
+            UpdateSetbackRequest body,
+            ISender sender) =>
+        {
+            await sender.Send(new UpdateHighwaySetbackStandardCommand(highwayFrontageType, body.SetbackDistanceInMeters, body.Notes));
+            return Results.NoContent();
+        })
+        .WithName("AdminUpdateHighwaySetbackStandard")
+        .Produces(StatusCodes.Status204NoContent);
+
+        group.MapGet("/grievances", async (ISender sender) =>
+         Results.Ok(await sender.Send(new GetAllGrievancesQuery())))
+        .WithName("AdminGetAllGrievances");
+
+        group.MapPut("/grievances/{id:guid}/resolve", async (Guid id, ResolveGrievanceRequest body, ISender sender) =>
+        {
+            await sender.Send(new ResolveGrievanceCommand(id, body.ResolutionNotes));
+            return Results.NoContent();
+        })
+        .WithName("AdminResolveGrievance")
+        .Produces(StatusCodes.Status204NoContent);
+
+        group.MapPut("/platform-settings", async (UpdatePlatformSettingsCommand command, ISender sender) =>
+        {
+            await sender.Send(command);
+            return Results.NoContent();
+        })
+        .WithName("AdminUpdatePlatformSettings")
+        .Produces(StatusCodes.Status204NoContent);
     }
 }
 public sealed record VerifyOwnershipRequest(string? Notes);
 public sealed record RejectOwnershipRequest(string Reason);
+public sealed record UpdateSetbackRequest(decimal SetbackDistanceInMeters, string? Notes);
+public sealed record ResolveGrievanceRequest(string ResolutionNotes);

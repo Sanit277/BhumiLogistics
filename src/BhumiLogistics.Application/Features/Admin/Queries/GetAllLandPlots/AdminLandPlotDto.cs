@@ -6,6 +6,7 @@ public sealed record AdminLandPlotDto(
     Guid Id,
     string PlusCode,
     decimal TotalAreaInKattha,
+    decimal BuildableAreaInKattha,
     HighwayType HighwayFrontageType,
     bool IsLeased,
     Guid OwnerId,
@@ -14,4 +15,7 @@ public sealed record AdminLandPlotDto(
     string RegisteredOwnerName,
     LandTenureType TenureType,
     bool MohiTenancyDeclared,
+    LandUseClassification LandUseClassification,
+    decimal FrontageLengthInMeters,
+    decimal SetbackDistanceInMeters,
     DateTimeOffset CreatedAtUtc);

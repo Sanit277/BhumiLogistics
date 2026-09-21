@@ -13,6 +13,9 @@ public interface IApplicationDbContext
     DbSet<LandPlot> LandPlots { get; }
     DbSet<LeaseOffer> LeaseOffers { get; }
     DbSet<User> Users { get; }
+    DbSet<HighwaySetbackStandard> HighwaySetbackStandards { get; }
+    DbSet<Grievance> Grievances { get; }
+    DbSet<PlatformSettings> PlatformSettings { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

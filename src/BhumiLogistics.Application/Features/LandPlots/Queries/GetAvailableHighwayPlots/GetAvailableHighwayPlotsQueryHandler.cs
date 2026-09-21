@@ -18,8 +18,9 @@ public class GetAvailableHighwayPlotsQueryHandler
             request.HighwayFrontageType, cancellationToken);
 
         return plots
-            .Where(p => p.OwnershipVerification.Status == Domain.Enums.OwnershipVerificationStatus.Verified)
-            .Select(p => new LandPlotSummaryDto(p.Id, p.PlusCode.Value, p.Area.ToTotalKattha(), p.HighwayFrontageType))
-            .ToList();
+        .Where(p => p.OwnershipVerification.Status == Domain.Enums.OwnershipVerificationStatus.Verified)
+        .Select(p => new LandPlotSummaryDto(
+                p.Id, p.PlusCode.Value, p.Area.ToTotalKattha(), p.BuildableAreaInKattha, p.HighwayFrontageType))
+        .ToList();
     }
 }

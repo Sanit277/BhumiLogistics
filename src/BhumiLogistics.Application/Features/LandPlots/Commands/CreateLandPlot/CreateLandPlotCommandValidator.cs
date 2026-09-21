@@ -37,5 +37,14 @@ public class CreateLandPlotCommandValidator : AbstractValidator<CreateLandPlotCo
         RuleFor(x => x.TenureType)
             .Must(t => t != LandTenureType.GuthiOther && t != LandTenureType.Government)
             .WithMessage("Land of this tenure type cannot be listed on this platform.");
+
+        RuleFor(x => x.FrontageLengthInMeters)
+            .GreaterThanOrEqualTo(0).WithMessage("Frontage length cannot be negative.");
+
+        RuleFor(x => x.LandUseConversionApprovalReferenceNumber)
+            .NotEmpty()
+            .When(x => x.LandUseClassification != LandUseClassification.Commercial
+                    && x.LandUseClassification != LandUseClassification.Industrial)
+            .WithMessage("A land-use conversion approval reference is required unless the land is already zoned Commercial or Industrial.");
     }
 }

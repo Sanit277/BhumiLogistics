@@ -20,6 +20,7 @@ public class GetAllLandPlotsQueryHandler : IRequestHandler<GetAllLandPlotsQuery,
                 p.Id,
                 p.PlusCode.Value,
                 p.Area.SizeInBigha * 20 + p.Area.SizeInKattha,
+                p.BuildableAreaInKattha,
                 p.HighwayFrontageType,
                 p.IsLeased,
                 p.OwnerId,
@@ -28,6 +29,9 @@ public class GetAllLandPlotsQueryHandler : IRequestHandler<GetAllLandPlotsQuery,
                 p.OwnershipVerification.RegisteredOwnerName,
                 p.OwnershipVerification.TenureType,
                 p.OwnershipVerification.MohiTenancyDeclared,
+                p.LandUseDeclaration.Classification,
+                p.FrontageLengthInMeters,
+                p.SetbackDistanceInMeters,
                 p.CreatedAtUtc))
             .ToListAsync(cancellationToken);
 }

@@ -20,4 +20,9 @@ public sealed record CreateLandPlotCommand(
     string? LandIdentityNumber,
     LandTenureType TenureType,
     bool MohiTenancyDeclared,
-    string? MohiTenancyNotes) : IRequest<Guid>;
+    string? MohiTenancyNotes,
+    LandUseClassification LandUseClassification,
+    string? LandUseConversionApprovalReferenceNumber,
+    string? LandUseConversionApprovingAuthority,
+    DateOnly? LandUseConversionApprovalDate,
+    decimal FrontageLengthInMeters) : IRequest<Guid>;

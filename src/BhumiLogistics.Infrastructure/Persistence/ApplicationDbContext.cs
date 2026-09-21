@@ -11,6 +11,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<LandPlot> LandPlots => Set<LandPlot>();
     public DbSet<LeaseOffer> LeaseOffers => Set<LeaseOffer>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<HighwaySetbackStandard> HighwaySetbackStandards => Set<HighwaySetbackStandard>();
+    public DbSet<Grievance> Grievances => Set<Grievance>();
+    public DbSet<PlatformSettings> PlatformSettings => Set<PlatformSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -2,6 +2,7 @@ using BhumiLogistics.Application.Common.Interfaces;
 using BhumiLogistics.Domain.Entities;
 using BhumiLogistics.Domain.Exceptions;
 using BhumiLogistics.Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using MediatR;
 
 namespace BhumiLogistics.Application.Features.LandPlots.Commands.CreateLandPlot;
@@ -42,6 +43,17 @@ public class CreateLandPlotCommandHandler : IRequestHandler<CreateLandPlotComman
             request.MohiTenancyDeclared,
             request.MohiTenancyNotes);
 
+        var landUseDeclaration = LandUseDeclaration.Create(
+            request.LandUseClassification,
+            request.LandUseConversionApprovalReferenceNumber,
+            request.LandUseConversionApprovingAuthority,
+            request.LandUseConversionApprovalDate);
+
+        // Snapshot the current admin-configured setback standard for this highway type.
+        var setbackStandard = await _dbContext.HighwaySetbackStandards
+            .FirstOrDefaultAsync(s => s.HighwayFrontageType == request.HighwayFrontageType, cancellationToken);
+        var setbackDistance = setbackStandard?.SetbackDistanceInMeters ?? 0;
+
         var landPlot = LandPlot.List(
             plusCode,
             area,
@@ -50,11 +62,14 @@ public class CreateLandPlotCommandHandler : IRequestHandler<CreateLandPlotComman
             request.Latitude,
             request.Longitude,
             request.Description,
-            ownershipVerification);
+            ownershipVerification,
+            landUseDeclaration,
+            request.FrontageLengthInMeters,
+            setbackDistance);
 
         await _landPlotRepository.AddAsync(landPlot, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return landPlot.Id;
     }
-    }
+}

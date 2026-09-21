@@ -6,4 +6,5 @@ public sealed record LandPlotSummaryDto(
     Guid Id,
     string PlusCode,
     decimal TotalAreaInKattha,
+    decimal BuildableAreaInKattha,
     HighwayType HighwayFrontageType);

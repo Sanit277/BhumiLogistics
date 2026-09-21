@@ -21,6 +21,15 @@ public class LandPlot : BaseAuditableEntity
     public decimal LongitudeCoordinate { get; private set; }
     public string Description { get; private set; } = string.Empty;
     public OwnershipVerification OwnershipVerification { get; private set; } = null!;
+    public LandUseDeclaration LandUseDeclaration { get; private set; } = null!;
+    public decimal FrontageLengthInMeters { get; private set; }
+
+    /// <summary>
+    /// Setback distance in effect at the time this plot was listed. Snapshotted
+    /// rather than looked up live, so a future change to the admin-editable
+    /// standard doesn't silently alter the buildable area of existing listings.
+    /// </summary>
+    public decimal SetbackDistanceInMeters { get; private set; }
 
     private readonly List<LeaseOffer> _leaseOffers = new();
     public IReadOnlyCollection<LeaseOffer> LeaseOffers => _leaseOffers.AsReadOnly();
@@ -35,7 +44,10 @@ public class LandPlot : BaseAuditableEntity
         decimal latitude,
         decimal longitude,
         string description,
-        OwnershipVerification ownershipVerification)
+        OwnershipVerification ownershipVerification,
+        LandUseDeclaration landUseDeclaration,
+        decimal frontageLengthInMeters,
+        decimal setbackDistanceInMeters)
     {
         PlusCode = plusCode;
         Area = area;
@@ -45,6 +57,9 @@ public class LandPlot : BaseAuditableEntity
         LongitudeCoordinate = longitude;
         Description = description;
         OwnershipVerification = ownershipVerification;
+        LandUseDeclaration = landUseDeclaration;
+        FrontageLengthInMeters = frontageLengthInMeters;
+        SetbackDistanceInMeters = setbackDistanceInMeters;
         IsLeased = false;
 
         AddDomainEvent(new LandPlotListedEvent(Id, OwnerId));
@@ -58,19 +73,38 @@ public class LandPlot : BaseAuditableEntity
         decimal latitude,
         decimal longitude,
         string description,
-        OwnershipVerification ownershipVerification)
+        OwnershipVerification ownershipVerification,
+        LandUseDeclaration landUseDeclaration,
+        decimal frontageLengthInMeters,
+        decimal setbackDistanceInMeters)
     {
         if (ownerId == Guid.Empty)
             throw new DomainException("A land plot must belong to a valid owner.");
 
+        if (frontageLengthInMeters < 0)
+            throw new DomainException("Frontage length cannot be negative.");
+
         return new LandPlot(
-            plusCode, area, highwayFrontageType, ownerId, latitude, longitude, description, ownershipVerification);
+            plusCode, area, highwayFrontageType, ownerId, latitude, longitude, description,
+            ownershipVerification, landUseDeclaration, frontageLengthInMeters, setbackDistanceInMeters);
     }
 
     /// <summary>
-    /// Registers a new lease offer against this plot. A plot already under
-    /// an active lease cannot accept further offers.
+    /// The portion of the plot actually usable for construction, after subtracting
+    /// the highway right-of-way/setback strip along the frontage. Never negative —
+    /// a plot smaller than its setback requirement simply has zero buildable area.
     /// </summary>
+    public decimal BuildableAreaInKattha
+    {
+        get
+        {
+            var setbackAreaInSquareMeters = FrontageLengthInMeters * SetbackDistanceInMeters;
+            var setbackAreaInKattha = setbackAreaInSquareMeters / LandArea.SquareMetersPerKattha;
+            var buildable = Area.ToTotalKattha() - setbackAreaInKattha;
+            return buildable < 0 ? 0 : buildable;
+        }
+    }
+
     public void SubmitOffer(LeaseOffer offer)
     {
         if (IsLeased)

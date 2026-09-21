@@ -44,6 +44,17 @@ public class LandPlotConfiguration : IEntityTypeConfiguration<LandPlot>
             ov.Property(o => o.VerifiedAtUtc).HasColumnName("OwnershipVerifiedAtUtc");
             ov.Property(o => o.VerificationNotes).HasColumnName("OwnershipVerificationNotes").HasMaxLength(1000);
         });
+        builder.OwnsOne(x => x.LandUseDeclaration, lu =>
+        {
+            lu.Property(l => l.Classification).HasColumnName("LandUseClassification").HasConversion<string>().HasMaxLength(30);
+            lu.Property(l => l.ConversionApprovalReferenceNumber).HasColumnName("LandUseConversionApprovalReferenceNumber").HasMaxLength(100);
+            lu.Property(l => l.ConversionApprovingAuthority).HasColumnName("LandUseConversionApprovingAuthority").HasMaxLength(200);
+            lu.Property(l => l.ConversionApprovalDate).HasColumnName("LandUseConversionApprovalDate");
+        });
+
+        builder.Property(x => x.FrontageLengthInMeters).HasPrecision(8, 2);
+        builder.Property(x => x.SetbackDistanceInMeters).HasPrecision(6, 2);
+        builder.Ignore(x => x.BuildableAreaInKattha);
 
         builder.Property(x => x.HighwayFrontageType).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Description).HasMaxLength(2000);

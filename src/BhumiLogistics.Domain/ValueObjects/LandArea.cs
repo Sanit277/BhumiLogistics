@@ -34,6 +34,10 @@ public sealed class LandArea : ValueObject
     /// <summary>Total normalized area expressed purely in Kattha, useful for sorting/filtering.</summary>
     public decimal ToTotalKattha() => (SizeInBigha * KatthaPerBigha) + SizeInKattha;
 
+    /// <summary>Standard Terai land measurement conversion: 1 Kattha ≈ 338.63 square meters.</summary>
+    public const decimal SquareMetersPerKattha = 338.63m;
+
+    public decimal ToTotalSquareMeters() => ToTotalKattha() * SquareMetersPerKattha;
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return SizeInBigha;
