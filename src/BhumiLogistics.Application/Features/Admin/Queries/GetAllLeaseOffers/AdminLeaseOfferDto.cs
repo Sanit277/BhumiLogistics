@@ -1,4 +1,5 @@
 using BhumiLogistics.Domain.Enums;
+using BuumiLogistics.Domain.Enums;
 
 namespace BhumiLogistics.Application.Features.Admin.Queries.GetAllLeaseOffers;
 
@@ -11,4 +12,9 @@ public sealed record AdminLeaseOfferDto(
     int DurationInYears,
     OfferStatus Status,
     DateOnly ProposedStartDate,
+    MalpotRegistrationStatus MalpotRegistrationStatus,
+    string? RegisteredDeedReferenceNumber,
+    DateOnly? RegistrationDate,
+    OwnerType? OwnerType,
+    decimal EstimatedTdsWithholdingAmount,
     DateTimeOffset CreatedAtUtc);

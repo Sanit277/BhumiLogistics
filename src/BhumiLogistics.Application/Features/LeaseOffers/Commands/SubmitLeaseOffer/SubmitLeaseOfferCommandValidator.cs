@@ -9,7 +9,9 @@ public class SubmitLeaseOfferCommandValidator : AbstractValidator<SubmitLeaseOff
         RuleFor(x => x.LandPlotId).NotEmpty();
         RuleFor(x => x.TenantName).NotEmpty().MaximumLength(200);
         RuleFor(x => x.OfferedAmount).GreaterThan(0);
-        RuleFor(x => x.DurationInYears).InclusiveBetween(1, 99);
+        RuleFor(x => x.DurationInYears)
+        .InclusiveBetween(1, 75)
+        .WithMessage("Lease duration must be between 1 and 75 years.");
         RuleFor(x => x.ProposedStartDate)
             .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage("Proposed start date cannot be in the past.");

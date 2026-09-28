@@ -17,6 +17,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Role).HasConversion<string>().HasMaxLength(30);
         builder.Property(x => x.PasswordHash).IsRequired();
 
+        builder.Property(x => x.OwnerType).HasConversion<string>().HasMaxLength(30);
+        builder.Property(x => x.DeclaredTotalLandHoldingInKattha).HasPrecision(12, 2);
+        builder.Property(x => x.CompanyType).HasConversion<string>().HasMaxLength(30);
+        builder.Property(x => x.FittaApprovalReferenceNumber).HasMaxLength(100);
+        builder.Property(x => x.DepartmentOfIndustryApprovalReferenceNumber).HasMaxLength(100);
+
         builder.Ignore(x => x.DomainEvents);
     }
 }

@@ -17,7 +17,8 @@ public class UpdatePlatformSettingsCommandHandler : IRequestHandler<UpdatePlatfo
         settings.Update(
             request.BusinessName, request.PanNumber, request.VatNumber, request.RegisteredAddress,
             request.ContactEmail, request.ContactPhone,
-            request.GrievanceOfficerName, request.GrievanceOfficerEmail, request.GrievanceOfficerPhone);
+            request.GrievanceOfficerName, request.GrievanceOfficerEmail, request.GrievanceOfficerPhone,
+            request.LandCeilingReviewThresholdInKattha);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

@@ -20,6 +20,7 @@ public class PlatformSettingsConfiguration : IEntityTypeConfiguration<PlatformSe
         builder.Property(x => x.GrievanceOfficerName).HasMaxLength(200).IsRequired();
         builder.Property(x => x.GrievanceOfficerEmail).HasMaxLength(256).IsRequired();
         builder.Property(x => x.GrievanceOfficerPhone).HasMaxLength(30).IsRequired();
+        builder.Property(x => x.LandCeilingReviewThresholdInKattha).HasPrecision(12, 2);
 
         builder.Ignore(x => x.DomainEvents);
 
@@ -38,7 +39,8 @@ public class PlatformSettingsConfiguration : IEntityTypeConfiguration<PlatformSe
             GrievanceOfficerName = "PLACEHOLDER — assign a real grievance officer",
             GrievanceOfficerEmail = "grievance@bhumilogistics.example",
             GrievanceOfficerPhone = "0000000000",
-            CreatedAtUtc = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero)
+            CreatedAtUtc = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            LandCeilingReviewThresholdInKattha = 100m,
         });
     }
 }

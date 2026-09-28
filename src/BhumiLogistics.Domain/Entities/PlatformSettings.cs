@@ -3,11 +3,6 @@ using BhumiLogistics.Domain.Exceptions;
 
 namespace BhumiLogistics.Domain.Entities;
 
-/// <summary>
-/// Singleton configuration record holding the public disclosures required of
-/// an e-commerce intermediary under the Electronic Commerce Act 2081 —
-/// business registration details and a designated grievance officer's contact.
-/// </summary>
 public class PlatformSettings : BaseAuditableEntity
 {
     public string BusinessName { get; private set; } = string.Empty;
@@ -20,12 +15,20 @@ public class PlatformSettings : BaseAuditableEntity
     public string GrievanceOfficerEmail { get; private set; } = string.Empty;
     public string GrievanceOfficerPhone { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// A review-trigger threshold, not an authoritative legal ceiling (the real
+    /// Land Act ceiling varies by district and land type). Owners whose declared
+    /// or platform-verified holdings exceed this get flagged for manual review.
+    /// </summary>
+    public decimal LandCeilingReviewThresholdInKattha { get; private set; }
+
     private PlatformSettings() { } // EF Core
 
     public PlatformSettings(
         string businessName, string panNumber, string? vatNumber, string registeredAddress,
         string contactEmail, string contactPhone,
-        string grievanceOfficerName, string grievanceOfficerEmail, string grievanceOfficerPhone)
+        string grievanceOfficerName, string grievanceOfficerEmail, string grievanceOfficerPhone,
+        decimal landCeilingReviewThresholdInKattha)
     {
         BusinessName = businessName;
         PanNumber = panNumber;
@@ -36,12 +39,14 @@ public class PlatformSettings : BaseAuditableEntity
         GrievanceOfficerName = grievanceOfficerName;
         GrievanceOfficerEmail = grievanceOfficerEmail;
         GrievanceOfficerPhone = grievanceOfficerPhone;
+        LandCeilingReviewThresholdInKattha = landCeilingReviewThresholdInKattha;
     }
 
     public void Update(
         string businessName, string panNumber, string? vatNumber, string registeredAddress,
         string contactEmail, string contactPhone,
-        string grievanceOfficerName, string grievanceOfficerEmail, string grievanceOfficerPhone)
+        string grievanceOfficerName, string grievanceOfficerEmail, string grievanceOfficerPhone,
+        decimal landCeilingReviewThresholdInKattha)
     {
         if (string.IsNullOrWhiteSpace(businessName))
             throw new DomainException("Business name is required.");
@@ -52,6 +57,9 @@ public class PlatformSettings : BaseAuditableEntity
         if (string.IsNullOrWhiteSpace(grievanceOfficerName) || string.IsNullOrWhiteSpace(grievanceOfficerEmail))
             throw new DomainException("A designated grievance officer's name and email are required.");
 
+        if (landCeilingReviewThresholdInKattha <= 0)
+            throw new DomainException("The land ceiling review threshold must be greater than zero.");
+
         BusinessName = businessName;
         PanNumber = panNumber;
         VatNumber = vatNumber;
@@ -61,5 +69,6 @@ public class PlatformSettings : BaseAuditableEntity
         GrievanceOfficerName = grievanceOfficerName;
         GrievanceOfficerEmail = grievanceOfficerEmail;
         GrievanceOfficerPhone = grievanceOfficerPhone;
+        LandCeilingReviewThresholdInKattha = landCeilingReviewThresholdInKattha;
     }
 }

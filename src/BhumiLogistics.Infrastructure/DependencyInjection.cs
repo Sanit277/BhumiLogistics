@@ -15,6 +15,7 @@ public static class DependencyInjection
         this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<DispatchDomainEventsInterceptor>();
+        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
@@ -22,7 +23,8 @@ public static class DependencyInjection
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
 
-            options.AddInterceptors(sp.GetRequiredService<DispatchDomainEventsInterceptor>());
+            options.AddInterceptors(sp.GetRequiredService<DispatchDomainEventsInterceptor>(),
+                sp.GetRequiredService<AuditableEntitySaveChangesInterceptor>());
         });
 
         services.AddScoped<IApplicationDbContext>(provider =>

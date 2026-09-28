@@ -26,7 +26,18 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
             throw new DomainException($"An account with email '{request.Email}' already exists.");
 
         var passwordHash = _passwordHasher.Hash(request.Password);
-        var user = new User(request.FullName, request.Email, request.PhoneNumber, request.Role, passwordHash);
+        var user = new User(
+            request.FullName,
+            request.Email,
+            request.PhoneNumber,
+            request.Role,
+            passwordHash,
+            request.OwnerType,
+            request.DeclaredTotalLandHoldingInKattha,
+            request.CompanyType,
+            request.FittaApprovalReferenceNumber,
+            request.DepartmentOfIndustryApprovalReferenceNumber,
+            request.ForeignInvestmentExtensionApproved);
 
         await _userRepository.AddAsync(user, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);

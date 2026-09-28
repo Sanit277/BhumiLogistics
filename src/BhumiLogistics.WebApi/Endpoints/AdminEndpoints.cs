@@ -9,6 +9,7 @@ using BhumiLogistics.Application.Features.Admin.Commands.UpdateHighwaySetbackSta
 using BhumiLogistics.Application.Features.Admin.Queries.GetAllGrievances;
 using BhumiLogistics.Application.Features.Admin.Commands.ResolveGrievance;
 using BhumiLogistics.Application.Features.Admin.Commands.UpdatePlatformSettings;
+using BhumiLogistics.Application.Features.Admin.Queries.GetOwnersExceedingLandCeiling;
 using BhumiLogistics.Application.Features.Platform.Queries.GetPlatformDisclosure;
 using MediatR;
 
@@ -93,6 +94,10 @@ public static class AdminEndpoints
         })
         .WithName("AdminUpdatePlatformSettings")
         .Produces(StatusCodes.Status204NoContent);
+
+        group.MapGet("/land-ceiling-review", async (ISender sender) =>
+        Results.Ok(await sender.Send(new GetOwnersExceedingLandCeilingQuery())))
+        .WithName("AdminGetOwnersExceedingLandCeiling");
     }
 }
 public sealed record VerifyOwnershipRequest(string? Notes);

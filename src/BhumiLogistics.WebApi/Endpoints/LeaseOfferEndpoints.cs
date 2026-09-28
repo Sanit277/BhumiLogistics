@@ -1,5 +1,7 @@
 using BhumiLogistics.Application.Features.LeaseOffers.Commands.AcceptLeaseOffer;
 using BhumiLogistics.Application.Features.LeaseOffers.Commands.SubmitLeaseOffer;
+using BhumiLogistics.Application.Features.LeaseOffers.Commands.MarkLeasePendingRegistration;
+using BhumiLogistics.Application.Features.LeaseOffers.Commands.RegisterLease;
 using MediatR;
 
 namespace BhumiLogistics.WebApi.Endpoints;
@@ -32,8 +34,28 @@ public static class LeaseOfferEndpoints
         .RequireAuthorization(policy => policy.RequireRole("Landowner"))   // ← CHANGED
         .Produces(StatusCodes.Status204NoContent)
         .ProducesValidationProblem();
+        group.MapPut("/{leaseOfferId:guid}/mark-pending-registration", async (Guid leaseOfferId, ISender sender) =>
+        {
+            await sender.Send(new MarkLeasePendingRegistrationCommand(leaseOfferId));
+            return Results.NoContent();
+        })
+        .WithName("MarkLeasePendingRegistration")
+        .RequireAuthorization(policy => policy.RequireRole("Landowner"))
+        .Produces(StatusCodes.Status204NoContent);
+
+        group.MapPut("/{leaseOfferId:guid}/register", async (
+            Guid leaseOfferId, RegisterLeaseRequest body, ISender sender) =>
+        {
+            await sender.Send(new RegisterLeaseCommand(leaseOfferId, body.DeedReferenceNumber, body.RegistrationDate));
+            return Results.NoContent();
+        })
+        .WithName("RegisterLease")
+        .RequireAuthorization(policy => policy.RequireRole("Landowner"))
+        .Produces(StatusCodes.Status204NoContent)
+        .ProducesValidationProblem();
     }
 }
 
 /// <summary>Request body for accepting a lease offer — pairs the offer with its parent plot.</summary>
 public sealed record AcceptLeaseOfferRequest(Guid LandPlotId);
+public sealed record RegisterLeaseRequest(string DeedReferenceNumber, DateOnly RegistrationDate);

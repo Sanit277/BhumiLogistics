@@ -15,6 +15,11 @@ public class LeaseOfferConfiguration : IEntityTypeConfiguration<LeaseOffer>
         builder.Property(x => x.OfferedAmount).HasPrecision(18, 2);
         builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(30);
         builder.Property(x => x.ProposedStartDate).HasColumnType("date");
+        builder.Property(x => x.MalpotRegistrationStatus).HasConversion<string>().HasMaxLength(30);
+        builder.Property(x => x.RegisteredDeedReferenceNumber).HasMaxLength(100);
+        builder.Property(x => x.RegistrationDate).HasColumnType("date");
+
+        builder.Ignore(x => x.RequiresGovernmentRegistration);
 
         builder.Ignore(x => x.DomainEvents);
     }

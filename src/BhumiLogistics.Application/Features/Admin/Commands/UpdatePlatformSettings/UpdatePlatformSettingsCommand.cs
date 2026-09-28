@@ -5,4 +5,5 @@ namespace BhumiLogistics.Application.Features.Admin.Commands.UpdatePlatformSetti
 public sealed record UpdatePlatformSettingsCommand(
     string BusinessName, string PanNumber, string? VatNumber, string RegisteredAddress,
     string ContactEmail, string ContactPhone,
-    string GrievanceOfficerName, string GrievanceOfficerEmail, string GrievanceOfficerPhone) : IRequest;
+    string GrievanceOfficerName, string GrievanceOfficerEmail, string GrievanceOfficerPhone,
+    decimal LandCeilingReviewThresholdInKattha) : IRequest;
