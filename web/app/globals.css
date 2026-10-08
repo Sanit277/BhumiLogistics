@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  /* Color tokens — warm, paper-toned public site, sharing the ochre accent with the admin dashboard */
+  --color-canvas: #f6f1e4;
+  --color-surface: #ffffff;
+  --color-ink: #2a2a23;
+  --color-ink-dim: #6b6a5e;
+  --color-hairline: #e3dcc8;
+  --color-accent: #c99a3b;
+  --color-accent-dark: #8a6b2c;
+  --color-forest: #3f5d44;
+  --color-forest-dim: #e8ede8;
+  --color-sage: #6f8f6b;
+  --color-brick: #b5573f;
+
+  /* Fonts — same pairing as the admin dashboard for brand continuity */
+  --font-display: "Zilla Slab", Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, sans-serif;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-canvas);
+}

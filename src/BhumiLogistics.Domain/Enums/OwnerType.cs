@@ -1,4 +1,4 @@
-namespace BuumiLogistics.Domain.Enums;
+namespace BhumiLogistics.Domain.Enums;
 
 public enum OwnerType
 {

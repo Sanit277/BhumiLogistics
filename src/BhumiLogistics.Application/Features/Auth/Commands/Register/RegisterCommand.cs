@@ -1,5 +1,4 @@
 using BhumiLogistics.Domain.Enums;
-using BuumiLogistics.Domain.Enums;
 using MediatR;
 
 namespace BhumiLogistics.Application.Features.Auth.Commands.Register;

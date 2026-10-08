@@ -5,26 +5,24 @@ using MediatR;
 
 namespace BhumiLogistics.Application.Features.LeaseOffers.Commands.SubmitLeaseOffer;
 
-/// <summary>
-/// Handles submission of a corporate tenant's lease offer against an
-/// existing land plot. Notification to the landowner is handled entirely
-/// by the LeaseOfferSubmittedEvent handler — this handler only creates the offer.
-/// </summary>
 public class SubmitLeaseOfferCommandHandler : IRequestHandler<SubmitLeaseOfferCommand, Guid>
 {
     private readonly ILandPlotRepository _landPlotRepository;
     private readonly ILeaseOfferRepository _leaseOfferRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IApplicationDbContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
 
     public SubmitLeaseOfferCommandHandler(
         ILandPlotRepository landPlotRepository,
         ILeaseOfferRepository leaseOfferRepository,
+        IUserRepository userRepository,
         IApplicationDbContext dbContext,
         ICurrentUserService currentUserService)
     {
         _landPlotRepository = landPlotRepository;
         _leaseOfferRepository = leaseOfferRepository;
+        _userRepository = userRepository;
         _dbContext = dbContext;
         _currentUserService = currentUserService;
     }
@@ -34,8 +32,13 @@ public class SubmitLeaseOfferCommandHandler : IRequestHandler<SubmitLeaseOfferCo
         var tenantUserId = _currentUserService.UserId
             ?? throw new DomainException("Unable to determine the authenticated tenant.");
 
+        var tenantUser = await _userRepository.GetByIdAsync(tenantUserId, cancellationToken)
+            ?? throw new DomainException("Authenticated tenant account could not be found.");
+
         var landPlot = await _landPlotRepository.GetByIdAsync(request.LandPlotId, cancellationToken)
             ?? throw new DomainException($"Land plot '{request.LandPlotId}' was not found.");
+
+        var maximumDuration = tenantUser.MaximumLeaseDurationInYearsAsTenant();
 
         var offer = LeaseOffer.Create(
             landPlot.Id,
@@ -43,12 +46,13 @@ public class SubmitLeaseOfferCommandHandler : IRequestHandler<SubmitLeaseOfferCo
             tenantUserId,
             request.OfferedAmount,
             request.DurationInYears,
-            request.ProposedStartDate);
+            request.ProposedStartDate,
+            maximumDuration);
 
-        landPlot.SubmitOffer(offer); // domain guards against leased plots
+        landPlot.SubmitOffer(offer);
 
         await _leaseOfferRepository.AddAsync(offer, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken); // domain events dispatched here automatically
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return offer.Id;
     }

@@ -1,6 +1,7 @@
 using BhumiLogistics.Application.Features.LandPlots.Commands.CreateLandPlot;
 using BhumiLogistics.Application.Features.LandPlots.Queries.GetAvailableHighwayPlots;
 using BhumiLogistics.Application.Features.LandPlots.Queries.GetLandPlotById;
+using BhumiLogistics.Application.Features.LandPlots.Queries.GetMyLandPlots;
 using BhumiLogistics.Domain.Enums;
 using MediatR;
 
@@ -42,5 +43,11 @@ public static class LandPlotEndpoints
         })
         .WithName("GetAvailableHighwayPlots")
         .Produces<IReadOnlyList<LandPlotSummaryDto>>();
+
+        group.MapGet("/mine", async (ISender sender) =>
+        Results.Ok(await sender.Send(new GetMyLandPlotsQuery())))
+        .WithName("GetMyLandPlots")
+        .RequireAuthorization(policy => policy.RequireRole("Landowner"))
+        .Produces<IReadOnlyList<MyLandPlotDto>>();
     }
 }

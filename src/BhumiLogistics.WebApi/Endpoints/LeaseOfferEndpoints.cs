@@ -2,6 +2,7 @@ using BhumiLogistics.Application.Features.LeaseOffers.Commands.AcceptLeaseOffer;
 using BhumiLogistics.Application.Features.LeaseOffers.Commands.SubmitLeaseOffer;
 using BhumiLogistics.Application.Features.LeaseOffers.Commands.MarkLeasePendingRegistration;
 using BhumiLogistics.Application.Features.LeaseOffers.Commands.RegisterLease;
+using BhumiLogistics.Application.Features.LeaseOffers.Queries.GetMyLeaseOffers;
 using MediatR;
 
 namespace BhumiLogistics.WebApi.Endpoints;
@@ -53,6 +54,12 @@ public static class LeaseOfferEndpoints
         .RequireAuthorization(policy => policy.RequireRole("Landowner"))
         .Produces(StatusCodes.Status204NoContent)
         .ProducesValidationProblem();
+
+        group.MapGet("/mine", async (ISender sender) =>
+        Results.Ok(await sender.Send(new GetMyLeaseOffersQuery())))
+        .WithName("GetMyLeaseOffers")
+        .RequireAuthorization(policy => policy.RequireRole("CorporateTenant"))
+        .Produces<IReadOnlyList<MyLeaseOfferDto>>();   
     }
 }
 

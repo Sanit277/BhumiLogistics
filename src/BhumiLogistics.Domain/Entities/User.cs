@@ -1,8 +1,6 @@
 using BhumiLogistics.Domain.Common;
 using BhumiLogistics.Domain.Enums;
 using BhumiLogistics.Domain.Exceptions;
-using BuumiLogistics.Domain.Enums;
-
 namespace BhumiLogistics.Domain.Entities;
 
 public class User : BaseAuditableEntity
